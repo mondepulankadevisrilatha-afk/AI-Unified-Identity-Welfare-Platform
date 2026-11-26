@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}{{ 'New application' if mode == 'create' else 'Edit application' }}{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-list-check"></i>
+  {{ 'New application' if mode == 'create' else 'Edit application' }}</h1></div>
+<div class="card auth-card">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.scheme_id) }}
+    {{ field(form.status) }}
+    {{ field(form.reference_number, "Portal reference (optional)") }}
+    <div class="grid grid-2">
+      {{ field(form.submitted_on) }}
+      {{ field(form.reminder_date) }}
+    </div>
+    {{ field(form.notes, "Any notes to remember") }}
+    {{ form.submit(class="btn") }}
+    <a class="btn btn-ghost" href="{{ url_for('applications.list_applications') }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

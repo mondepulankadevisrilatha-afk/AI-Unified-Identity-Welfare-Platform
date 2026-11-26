@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Eligibility rules{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <div><h1><i class="fa-solid fa-sliders"></i> Eligibility rules</h1>
+    <p class="muted">{{ scheme.scheme_name }}</p></div>
+  <a class="btn btn-ghost btn-small" href="{{ url_for('admin.schemes') }}">All schemes</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Current rules</h2>
+    {% if scheme.rules %}
+      <ul class="rules">
+        {% for r in scheme.rules %}
+          <li class="row-between">
+            <span>{{ r.description or (r.field ~ ' ' ~ r.operator ~ ' ' ~ r.value) }}
+              <code>{{ r.field }} {{ r.operator }} {{ r.value }}</code></span>
+            <form method="post" class="inline"
+                  action="{{ url_for('admin.rule_delete', rule_id=r.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="link-btn danger">&times;</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No rules yet — this scheme will match most applicants.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Add a rule</h2>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ field(form.field) }}
+      {{ field(form.operator) }}
+      {{ field(form.value, "e.g. 250000 or Female or true") }}
+      {{ field(form.description, "Plain-language description (optional)") }}
+      {{ form.submit(class="btn") }}
+    </form>
+    <p class="hint">For "one of", separate options with <code>|</code>
+       (e.g. <code>SC|ST|OBC</code>). For yes/no fields use the
+       <code>is yes</code> / <code>is no</code> operators.</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Application Tracker{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <div><h1><i class="fa-solid fa-list-check"></i> Application Tracker</h1>
+    <p class="muted">Track every scheme you apply to, with a document checklist
+       and reminders.</p></div>
+  <a class="btn" href="{{ url_for('applications.create') }}"><i class="fa-solid fa-plus"></i> New</a>
+</div>
+
+{% if due %}
+<div class="card banner banner-warn">
+  <i class="fa-solid fa-bell"></i>
+  <span>You have {{ due|length }} reminder(s) due.</span>
+</div>
+{% endif %}
+
+{% if apps %}
+  <div class="card">
+    <table class="table">
+      <thead><tr><th>Scheme</th><th>Status</th><th>Reference</th>
+        <th>Reminder</th><th></th></tr></thead>
+      <tbody>
+        {% for a in apps %}
+          <tr>
+            <td><a href="{{ url_for('applications.detail', app_id=a.id) }}">
+              {{ a.scheme.scheme_name if a.scheme else '—' }}</a></td>
+            <td><span class="tag tag-status">{{ a.status }}</span></td>
+            <td class="muted">{{ a.reference_number or '—' }}</td>
+            <td class="muted">{{ a.reminder_date or '—' }}
+              {% if a.is_reminder_due %}<span class="tag tag-noteligible">Due</span>{% endif %}</td>
+            <td><a class="btn btn-small btn-ghost"
+                   href="{{ url_for('applications.detail', app_id=a.id) }}">Open</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="card center-card">
+    <p class="muted">No applications tracked yet.</p>
+    <a class="btn" href="{{ url_for('applications.create') }}">Start tracking one</a>
+  </div>
+{% endif %}
+{% endblock %}

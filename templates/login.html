@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="card auth-card">
+  <h1><i class="fa-solid fa-right-to-bracket"></i> Welcome back</h1>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.identifier, "Email or username") }}
+    {{ field(form.password, "Your password") }}
+    {{ field(form.remember) }}
+    {{ form.submit(class="btn btn-block") }}
+  </form>
+  <p class="muted">New here?
+    <a href="{{ url_for('auth.register') }}">Create an account</a>.</p>
+  <div class="demo-box">
+    <strong>Demo logins</strong>
+    <p>Admin: <code>admin@welfare.local</code> / <code>Admin@123</code></p>
+    <p>User: <code>asha@example.com</code> / <code>Demo@123</code></p>
+  </div>
+</div>
+{% endblock %}

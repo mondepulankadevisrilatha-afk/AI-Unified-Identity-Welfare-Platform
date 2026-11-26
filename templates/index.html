@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Home &mdash; Unified Welfare Platform{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>One identity. Every benefit you deserve.</h1>
+    <p class="lead">Store your identity documents securely, extract their
+      details automatically, and discover the government welfare schemes you
+      actually qualify for &mdash; explained in plain language.</p>
+    <div class="hero-cta">
+      {% if current_user.is_authenticated %}
+        <a class="btn" href="{{ url_for('main.dashboard') }}">Go to dashboard</a>
+      {% else %}
+        <a class="btn" href="{{ url_for('auth.register') }}">Get started free</a>
+        <a class="btn btn-ghost" href="{{ url_for('schemes.explore') }}">Browse schemes</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-art"><i class="fa-solid fa-id-card-clip"></i></div>
+</section>
+
+<section class="features">
+  <h2 class="section-title">What you can do</h2>
+  <div class="grid grid-3">
+    <div class="card feature"><i class="fa-solid fa-folder-open"></i>
+      <h3>Document Vault</h3>
+      <p>Keep Aadhaar, PAN, certificates and more in one encrypted-at-rest place.</p></div>
+    <div class="card feature"><i class="fa-solid fa-expand"></i>
+      <h3>Smart Scanner</h3>
+      <p>OCR reads your documents and extracts key fields &mdash; ID numbers are masked.</p></div>
+    <div class="card feature"><i class="fa-solid fa-wand-magic-sparkles"></i>
+      <h3>Recommendations</h3>
+      <p>A transparent rules engine matches you to schemes and tells you why.</p></div>
+    <div class="card feature"><i class="fa-solid fa-circle-check"></i>
+      <h3>Eligibility Checker</h3>
+      <p>Test any scheme against your details and save the result.</p></div>
+    <div class="card feature"><i class="fa-solid fa-list-check"></i>
+      <h3>Application Tracker</h3>
+      <p>Track status, keep a document checklist and set reminders.</p></div>
+    <div class="card feature"><i class="fa-solid fa-shield-halved"></i>
+      <h3>Privacy First</h3>
+      <p>You confirm every piece of extracted data before it is ever stored.</p></div>
+  </div>
+</section>
+
+{% if schemes %}
+<section class="schemes-preview">
+  <h2 class="section-title">Popular schemes</h2>
+  <div class="grid grid-3">
+    {% for s in schemes %}
+      <a class="card scheme-card" href="{{ url_for('schemes.detail', scheme_id=s.id) }}">
+        <span class="pill">{{ s.category }}</span>
+        <h3>{{ s.scheme_name }}</h3>
+        <p>{{ s.description|truncate(90) }}</p>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="how card">
+  <h2 class="section-title">How it works</h2>
+  <ol class="steps">
+    <li><span>1</span> Create your free account and fill a short profile.</li>
+    <li><span>2</span> Upload your documents and scan them to extract details.</li>
+    <li><span>3</span> See matched schemes, check eligibility and track applications.</li>
+  </ol>
+</section>
+
+{% endblock %}

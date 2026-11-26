@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <h1><i class="fa-solid fa-tags"></i> Categories</h1>
+  <a class="btn btn-ghost btn-small" href="{{ url_for('admin.dashboard') }}">Back to admin</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Add category</h2>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ field(form.name) }}
+      {{ field(form.kind) }}
+      {{ field(form.icon, "fa-heart (optional)") }}
+      {{ form.submit(class="btn") }}
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Custom categories</h2>
+    {% if categories %}
+      <table class="table">
+        <thead><tr><th>Name</th><th>Kind</th><th></th></tr></thead>
+        <tbody>
+          {% for c in categories %}
+            <tr><td>{{ c.name }}</td><td><span class="pill">{{ c.kind }}</span></td>
+              <td><form method="post" class="inline"
+                        action="{{ url_for('admin.category_delete', cat_id=c.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="link-btn danger">&times;</button></form></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}<p class="muted">No custom categories.</p>{% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <h2>Built-in categories</h2>
+  <p class="muted">Documents</p>
+  <div class="doc-pills">{% for c in builtin_doc %}<span class="pill">{{ c }}</span>{% endfor %}</div>
+  <p class="muted" style="margin-top:1rem">Schemes</p>
+  <div class="doc-pills">{% for c in builtin_scheme %}<span class="pill">{{ c }}</span>{% endfor %}</div>
+</div>
+{% endblock %}

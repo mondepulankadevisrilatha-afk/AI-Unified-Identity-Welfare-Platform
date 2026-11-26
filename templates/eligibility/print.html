@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Eligibility result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="print-body">
+  <div class="print-sheet">
+    <h1>Eligibility Result</h1>
+    <p class="muted">AI Unified Welfare Platform — generated
+       {{ check.checked_at.strftime('%d %b %Y, %H:%M') }}</p>
+    <hr>
+    <h2>{{ check.scheme.scheme_name if check.scheme else 'Scheme' }}</h2>
+    <p><strong>Result:</strong> {{ check.result }} &nbsp;|&nbsp;
+       <strong>Score:</strong> {{ check.score }}%</p>
+
+    <h3>Details used</h3>
+    <table class="kv">
+      {% for k, v in snapshot.items() %}
+        <tr><th>{{ k|replace('_',' ')|title }}</th><td>{{ v }}</td></tr>
+      {% endfor %}
+    </table>
+
+    <h3>Explanation</h3>
+    <ul>{% for r in check.reasons_list() %}<li>{{ r }}</li>{% endfor %}</ul>
+
+    <p class="hint">This document is for guidance only and does not guarantee
+       approval. Verify on the official portal.</p>
+    <button class="btn no-print" onclick="window.print()">Print</button>
+  </div>
+</body>
+</html>

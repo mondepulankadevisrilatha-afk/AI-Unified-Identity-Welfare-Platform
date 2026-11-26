@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ doc.document_name }}{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <div>
+    <h1>{{ doc.document_name }}</h1>
+    <span class="pill">{{ doc.category }}</span>
+    <span class="tag tag-{{ doc.status|lower }}">{{ doc.status }}</span>
+  </div>
+  <a class="btn btn-ghost btn-small" href="{{ url_for('documents.list_documents') }}">
+    <i class="fa-solid fa-arrow-left"></i> Back</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h2>File</h2>
+    <p class="muted">Original: {{ doc.original_name or '—' }}<br>
+       Type: {{ doc.mime_type or '—' }}<br>
+       Uploaded: {{ doc.uploaded_at.strftime('%d %b %Y, %H:%M') }}</p>
+    <div class="btn-row">
+      <a class="btn btn-small" target="_blank"
+         href="{{ url_for('documents.file', doc_id=doc.id) }}">
+        <i class="fa-solid fa-eye"></i> Preview</a>
+      <a class="btn btn-small btn-ghost"
+         href="{{ url_for('documents.file', doc_id=doc.id, download=1) }}">
+        <i class="fa-solid fa-download"></i> Download</a>
+      <a class="btn btn-small btn-ghost"
+         href="{{ url_for('documents.replace', doc_id=doc.id) }}">
+        <i class="fa-solid fa-rotate"></i> Replace</a>
+    </div>
+
+    <form method="post" class="status-form"
+          action="{{ url_for('documents.update_status', doc_id=doc.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Status
+        <select class="input" name="status">
+          {% for s in ['Uploaded','Verified','Expired'] %}
+            <option value="{{ s }}" {{ 'selected' if s == doc.status }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button class="btn btn-small">Update</button>
+    </form>
+
+    <form method="post" class="danger-form"
+          action="{{ url_for('documents.delete', doc_id=doc.id) }}"
+          onsubmit="return confirm('Delete this document and its file?');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-small btn-danger"><i class="fa-solid fa-trash"></i> Delete</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Extracted details</h2>
+    {% if doc.is_confirmed %}
+      <table class="kv">
+        <tr><th>Name</th><td>{{ doc.extracted_name or '—' }}</td></tr>
+        <tr><th>Date of birth</th><td>{{ doc.extracted_dob or '—' }}</td></tr>
+        <tr><th>ID number</th><td>{{ doc.extracted_number or '—' }}</td></tr>
+        <tr><th>Address</th><td>{{ doc.extracted_address or '—' }}</td></tr>
+      </table>
+      <p class="hint"><i class="fa-solid fa-shield-halved"></i>
+         ID numbers are stored masked for your safety.</p>
+    {% else %}
+      <p class="muted">No confirmed details yet.</p>
+      <form method="post"
+            action="{{ url_for('scanner.run_ocr_route', doc_id=doc.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn"><i class="fa-solid fa-expand"></i> Scan document</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

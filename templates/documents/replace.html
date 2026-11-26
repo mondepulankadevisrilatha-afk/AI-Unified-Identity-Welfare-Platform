@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Replace file{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-rotate"></i> Replace file</h1>
+  <p class="muted">{{ doc.document_name }}</p></div>
+<div class="card auth-card">
+  <p class="hint">Uploading a new file clears any previously extracted details,
+     so you can scan it again.</p>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.file) }}
+    {{ form.submit(class="btn") }}
+    <a class="btn btn-ghost" href="{{ url_for('documents.detail', doc_id=doc.id) }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

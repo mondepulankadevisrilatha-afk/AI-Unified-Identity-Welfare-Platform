@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1><i class="fa-solid fa-user"></i> My profile</h1>
+  <p class="muted">These details power your scheme recommendations and
+     eligibility checks.</p>
+</div>
+
+<div class="card">
+  <div class="completion">
+    <div class="completion-label">Profile completeness: <strong>{{ completion }}%</strong></div>
+    <div class="progress"><div class="progress-bar" style="width: {{ completion }}%"></div></div>
+  </div>
+
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="grid grid-2">
+      {{ field(form.full_name) }}
+      {{ field(form.age) }}
+      {{ field(form.gender) }}
+      {{ field(form.annual_income) }}
+      {{ field(form.social_category) }}
+      {{ field(form.occupation) }}
+      {{ field(form.state) }}
+    </div>
+    <fieldset class="checks">
+      <legend>About you</legend>
+      {{ field(form.is_student) }}
+      {{ field(form.is_farmer) }}
+      {{ field(form.is_differently_abled) }}
+    </fieldset>
+    {{ form.submit(class="btn") }}
+  </form>
+</div>
+{% endblock %}

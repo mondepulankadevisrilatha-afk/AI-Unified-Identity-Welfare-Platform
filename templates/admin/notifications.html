@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Broadcast notification{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <h1><i class="fa-solid fa-bullhorn"></i> Notifications</h1>
+  <a class="btn btn-ghost btn-small" href="{{ url_for('admin.dashboard') }}">Back to admin</a>
+</div>
+
+<div class="card auth-card">
+  <h2>Send to all active users</h2>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.message, "Message to broadcast") }}
+    {{ form.submit(class="btn") }}
+  </form>
+</div>
+
+<div class="card">
+  <h2>Recent notifications</h2>
+  {% if recent %}
+    <ul class="notif-list">
+      {% for n in recent %}
+        <li class="notif notif-{{ n.category }}">
+          <span>{{ n.message }}</span>
+          <time class="muted">{{ n.created_at.strftime('%d %b %H:%M') }}</time>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}<p class="muted">Nothing sent yet.</p>{% endif %}
+</div>
+{% endblock %}

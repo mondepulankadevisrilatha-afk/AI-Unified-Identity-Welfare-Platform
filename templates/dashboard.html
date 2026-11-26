@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Hello, {{ current_user.full_name or current_user.username }} 👋</h1>
+  <p class="muted">Here is a snapshot of your welfare profile.</p>
+</div>
+
+<div class="grid grid-4 stat-row">
+  <div class="card stat"><i class="fa-solid fa-folder"></i>
+    <div class="stat-num">{{ doc_count }}</div><div class="stat-label">Documents</div></div>
+  <div class="card stat"><i class="fa-solid fa-wand-magic-sparkles"></i>
+    <div class="stat-num">{{ rec_count }}</div><div class="stat-label">Eligible schemes</div></div>
+  <div class="card stat"><i class="fa-solid fa-list-check"></i>
+    <div class="stat-num">{{ app_count }}</div><div class="stat-label">Applications</div></div>
+  <div class="card stat"><i class="fa-solid fa-user-check"></i>
+    <div class="stat-num">{{ completion }}%</div><div class="stat-label">Profile done</div></div>
+</div>
+
+{% if completion < 100 %}
+<div class="card banner">
+  <i class="fa-solid fa-circle-info"></i>
+  <span>Complete your profile to unlock more accurate recommendations.</span>
+  <a class="btn btn-small" href="{{ url_for('auth.profile') }}">Complete profile</a>
+</div>
+{% endif %}
+
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Top recommendations</h2>
+    {% if top %}
+      <ul class="rec-list">
+        {% for r in top %}
+          <li>
+            <a href="{{ url_for('schemes.detail', scheme_id=r.scheme_id) }}">
+              {{ r.scheme.scheme_name if r.scheme else 'Scheme' }}</a>
+            <span class="tag tag-{{ r.result|replace(' ','')|lower }}">{{ r.result }}</span>
+            <div class="mini-progress"><div style="width: {{ r.score }}%"></div></div>
+          </li>
+        {% endfor %}
+      </ul>
+      <a class="btn btn-small" href="{{ url_for('recommendations.index') }}">See all</a>
+    {% else %}
+      <p class="muted">No recommendations yet. Fill your profile and
+        <a href="{{ url_for('recommendations.index') }}">refresh</a>.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Upcoming reminders</h2>
+    {% if reminders %}
+      <ul class="plain-list">
+        {% for a in reminders %}
+          <li>
+            <a href="{{ url_for('applications.detail', app_id=a.id) }}">
+              {{ a.scheme.scheme_name if a.scheme else 'Application' }}</a>
+            <span class="muted">{{ a.reminder_date }}</span>
+            {% if a.is_reminder_due %}<span class="tag tag-noteligible">Due</span>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No reminders set.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Applications by status</h2>
+    {% if status_counts %}
+      <div class="bars">
+        {% set maxv = status_counts.values()|max %}
+        {% for status, count in status_counts.items() %}
+          <div class="bar-row">
+            <span class="bar-label">{{ status }}</span>
+            <div class="bar"><div class="bar-fill" style="width: {{ (count / maxv * 100)|round }}%"></div></div>
+            <span class="bar-count">{{ count }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}<p class="muted">No applications yet.</p>{% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Documents by category</h2>
+    {% if cat_counts %}
+      <div class="bars">
+        {% set maxc = cat_counts.values()|max %}
+        {% for cat, count in cat_counts.items() %}
+          <div class="bar-row">
+            <span class="bar-label">{{ cat }}</span>
+            <div class="bar"><div class="bar-fill alt" style="width: {{ (count / maxc * 100)|round }}%"></div></div>
+            <span class="bar-count">{{ count }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}<p class="muted">No documents yet.
+      <a href="{{ url_for('documents.upload') }}">Upload one</a>.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

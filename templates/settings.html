@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-gear"></i> Settings</h1></div>
+<div class="card auth-card">
+  <h2>Change password</h2>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.current_password, "Current password") }}
+    {{ field(form.new_password, "New password") }}
+    {{ field(form.confirm, "Confirm new password") }}
+    {{ form.submit(class="btn") }}
+  </form>
+</div>
+{% endblock %}

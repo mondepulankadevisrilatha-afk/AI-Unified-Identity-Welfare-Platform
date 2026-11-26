@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Explore schemes{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-layer-group"></i> Explore schemes</h1>
+  <p class="muted">Browse welfare schemes and open any one to see details and
+     whether you qualify.</p></div>
+
+<form class="filters card" method="get">
+  <input class="input" type="text" name="q" value="{{ q }}" placeholder="Search schemes...">
+  <select class="input" name="category">
+    <option value="">All categories</option>
+    {% for c in categories %}
+      <option value="{{ c }}" {{ 'selected' if c == category }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-small"><i class="fa-solid fa-magnifying-glass"></i> Filter</button>
+</form>
+
+{% if schemes %}
+  <div class="grid grid-3">
+    {% for s in schemes %}
+      <a class="card scheme-card" href="{{ url_for('schemes.detail', scheme_id=s.id) }}">
+        <span class="scheme-ico"><i class="fa-solid {{ icons.get(s.category, 'fa-layer-group') }}"></i></span>
+        <span class="pill">{{ s.category }}</span>
+        <h3>{{ s.scheme_name }}</h3>
+        <p>{{ s.description|truncate(110) }}</p>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card center-card"><p class="muted">No schemes match your filter.</p></div>
+{% endif %}
+{% endblock %}

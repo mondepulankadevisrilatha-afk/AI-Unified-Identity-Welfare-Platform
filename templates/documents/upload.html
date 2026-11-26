@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Upload document{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-upload"></i> Upload a document</h1></div>
+<div class="card auth-card">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.document_name, "e.g. My Aadhaar Card") }}
+    {{ field(form.category) }}
+    {{ field(form.file) }}
+    <p class="hint">Accepted: PDF, PNG, JPG. Maximum size 5 MB. The file type
+       is verified by its content, not just the extension.</p>
+    {{ form.submit(class="btn btn-block") }}
+  </form>
+</div>
+{% endblock %}

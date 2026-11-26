@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ scheme.scheme_name }}{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <div>
+    <span class="pill">{{ scheme.category }}</span>
+    <h1>{{ scheme.scheme_name }}</h1>
+  </div>
+  <a class="btn btn-ghost btn-small" href="{{ url_for('schemes.explore') }}">
+    <i class="fa-solid fa-arrow-left"></i> All schemes</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h2>About this scheme</h2>
+    <p>{{ scheme.description }}</p>
+    {% if scheme.benefits %}<h3>Benefits</h3><p>{{ scheme.benefits }}</p>{% endif %}
+    {% if scheme.required_documents_list() %}
+      <h3>Documents needed</h3>
+      <ul class="doc-pills">
+        {% for d in scheme.required_documents_list() %}<li class="pill">{{ d }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    <div class="btn-row">
+      {% if scheme.official_url %}
+        <a class="btn btn-small" target="_blank" rel="noopener"
+           href="{{ scheme.official_url }}"><i class="fa-solid fa-up-right-from-square"></i> Official portal</a>
+      {% endif %}
+      {% if current_user.is_authenticated %}
+        <a class="btn btn-small btn-ghost"
+           href="{{ url_for('applications.create', scheme_id=scheme.id) }}">
+          <i class="fa-solid fa-plus"></i> Track an application</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Do I qualify?</h2>
+    {% if not current_user.is_authenticated %}
+      <p class="muted">Please <a href="{{ url_for('auth.login') }}">log in</a>
+         to see a personalised result.</p>
+    {% elif outcome %}
+      <div class="result-banner result-{{ outcome.result|replace(' ','')|lower }}">
+        <strong>{{ outcome.result }}</strong>
+        <span>Match score: {{ outcome.score }}%</span>
+      </div>
+      <ul class="reasons">
+        {% for r in outcome.reasons %}<li>{{ r }}</li>{% endfor %}
+      </ul>
+      <p class="hint">This is guidance based on your profile and the scheme's
+         rules. Always confirm on the official portal.</p>
+    {% endif %}
+    {% if scheme.rules %}
+      <h3>Eligibility rules</h3>
+      <ul class="rules">
+        {% for rule in scheme.rules %}
+          <li>{{ rule.description or (rule.field ~ ' ' ~ rule.operator ~ ' ' ~ rule.value) }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

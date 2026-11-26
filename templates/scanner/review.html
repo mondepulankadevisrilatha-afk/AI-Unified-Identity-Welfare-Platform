@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Review extracted details{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-magnifying-glass"></i> Review &amp; confirm</h1>
+  <p class="muted">We read the following from <strong>{{ doc.document_name }}</strong>.
+     Edit anything that looks wrong, then confirm to save.
+     {% if proposed.confidence %}<span class="pill">OCR confidence ~{{ proposed.confidence }}%</span>{% endif %}</p>
+</div>
+
+<div class="card auth-card">
+  <form method="post" action="{{ url_for('scanner.confirm', doc_id=doc.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group">
+      <label>Name</label>
+      <input class="input" name="extracted_name" value="{{ proposed.extracted_name or '' }}">
+    </div>
+    <div class="form-group">
+      <label>Date of birth</label>
+      <input class="input" name="extracted_dob" value="{{ proposed.extracted_dob or '' }}">
+    </div>
+    <div class="form-group">
+      <label>ID number (masked)</label>
+      <input class="input" name="extracted_number" value="{{ proposed.extracted_number or '' }}">
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <textarea class="input" name="extracted_address" rows="3">{{ proposed.extracted_address or '' }}</textarea>
+    </div>
+    <p class="hint"><i class="fa-solid fa-shield-halved"></i>
+       Only the details you confirm here are stored. ID numbers are kept masked.</p>
+    <button class="btn"><i class="fa-solid fa-circle-check"></i> Confirm &amp; save</button>
+    <a class="btn btn-ghost" href="{{ url_for('scanner.list_scanner') }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

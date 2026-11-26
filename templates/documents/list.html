@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Document Vault{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <div><h1><i class="fa-solid fa-folder"></i> Document Vault</h1>
+    <p class="muted">Your stored identity and support documents.</p></div>
+  <a class="btn" href="{{ url_for('documents.upload') }}"><i class="fa-solid fa-upload"></i> Upload</a>
+</div>
+
+<form class="filters card" method="get">
+  <input class="input" type="text" name="q" value="{{ q }}" placeholder="Search by name...">
+  <select class="input" name="category">
+    <option value="">All categories</option>
+    {% for c in categories %}
+      <option value="{{ c }}" {{ 'selected' if c == category }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-small"><i class="fa-solid fa-magnifying-glass"></i> Filter</button>
+</form>
+
+{% if docs %}
+  <div class="grid grid-3">
+    {% for d in docs %}
+      <div class="card doc-card">
+        <div class="doc-top">
+          <span class="pill">{{ d.category }}</span>
+          <span class="tag tag-{{ d.status|lower }}">{{ d.status }}</span>
+        </div>
+        <h3><a href="{{ url_for('documents.detail', doc_id=d.id) }}">{{ d.document_name }}</a></h3>
+        {% if d.is_confirmed %}
+          <p class="muted"><i class="fa-solid fa-circle-check"></i> Details extracted</p>
+        {% else %}
+          <p class="muted"><i class="fa-solid fa-circle-dot"></i> Not scanned yet</p>
+        {% endif %}
+        <time class="muted">{{ d.uploaded_at.strftime('%d %b %Y') }}</time>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card center-card">
+    <p class="muted">No documents found.</p>
+    <a class="btn" href="{{ url_for('documents.upload') }}">Upload your first document</a>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Document Scanner{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-expand"></i> Document Scanner</h1>
+  <p class="muted">Run OCR on a document to extract name, date of birth,
+     address and a masked ID number. Nothing is saved until you confirm.</p></div>
+
+{% if docs %}
+  <div class="card">
+    <table class="table">
+      <thead><tr><th>Document</th><th>Category</th><th>Extracted?</th><th></th></tr></thead>
+      <tbody>
+        {% for d in docs %}
+          <tr>
+            <td><a href="{{ url_for('documents.detail', doc_id=d.id) }}">{{ d.document_name }}</a></td>
+            <td><span class="pill">{{ d.category }}</span></td>
+            <td>{% if d.is_confirmed %}<i class="fa-solid fa-circle-check ok"></i> Yes
+                {% else %}<span class="muted">No</span>{% endif %}</td>
+            <td>
+              <form method="post"
+                    action="{{ url_for('scanner.run_ocr_route', doc_id=d.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-small">
+                  <i class="fa-solid fa-expand"></i>
+                  {{ 'Re-scan' if d.is_confirmed else 'Scan' }}</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="card center-card">
+    <p class="muted">No documents to scan yet.</p>
+    <a class="btn" href="{{ url_for('documents.upload') }}">Upload a document</a>
+  </div>
+{% endif %}
+{% endblock %}

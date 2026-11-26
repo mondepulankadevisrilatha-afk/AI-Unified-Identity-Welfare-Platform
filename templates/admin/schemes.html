@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Manage schemes{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <h1><i class="fa-solid fa-layer-group"></i> Schemes</h1>
+  <a class="btn" href="{{ url_for('admin.scheme_create') }}"><i class="fa-solid fa-plus"></i> New scheme</a>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Name</th><th>Category</th><th>Rules</th><th>Active</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for s in schemes %}
+        <tr>
+          <td>{{ s.scheme_name }}</td>
+          <td><span class="pill">{{ s.category }}</span></td>
+          <td>{{ s.rules|length }}</td>
+          <td>{% if s.is_active %}<span class="ok">Yes</span>{% else %}<span class="muted">No</span>{% endif %}</td>
+          <td class="actions">
+            <a class="btn btn-small btn-ghost" href="{{ url_for('admin.scheme_rules', scheme_id=s.id) }}">Rules</a>
+            <a class="btn btn-small btn-ghost" href="{{ url_for('admin.scheme_edit', scheme_id=s.id) }}">Edit</a>
+            <form method="post" class="inline"
+                  action="{{ url_for('admin.scheme_delete', scheme_id=s.id) }}"
+                  onsubmit="return confirm('Delete this scheme and its rules?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-small btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

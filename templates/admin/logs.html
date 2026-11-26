@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Activity log{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <h1><i class="fa-solid fa-clock-rotate-left"></i> Activity log</h1>
+  <a class="btn btn-ghost btn-small" href="{{ url_for('admin.dashboard') }}">Back to admin</a>
+</div>
+<div class="card">
+  {% if entries %}
+    <table class="table">
+      <thead><tr><th>When</th><th>User</th><th>Action</th><th>Detail</th><th>IP</th></tr></thead>
+      <tbody>
+        {% for e in entries %}
+          <tr>
+            <td class="muted">{{ e.created_at.strftime('%d %b %Y %H:%M') }}</td>
+            <td>{{ e.user_id or '—' }}</td>
+            <td><span class="tag tag-status">{{ e.action }}</span></td>
+            <td class="muted">{{ e.detail }}</td>
+            <td class="muted">{{ e.ip_address or '—' }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}<p class="muted">No activity recorded.</p>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}{{ 'New scheme' if mode == 'create' else 'Edit scheme' }}{% endblock %}
+{% block content %}
+<div class="page-head"><h1><i class="fa-solid fa-layer-group"></i>
+  {{ 'New scheme' if mode == 'create' else 'Edit scheme' }}</h1></div>
+<div class="card auth-card">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.scheme_name) }}
+    {{ field(form.category) }}
+    {{ field(form.description) }}
+    {{ field(form.benefits) }}
+    {{ field(form.official_url, "https://...") }}
+    {{ field(form.required_documents, "Aadhaar Card, Income Certificate") }}
+    {{ field(form.is_active) }}
+    {{ form.submit(class="btn") }}
+    <a class="btn btn-ghost" href="{{ url_for('admin.schemes') }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Manage users{% endblock %}
+{% block content %}
+<div class="page-head row-between">
+  <h1><i class="fa-solid fa-users"></i> Users</h1>
+  <a class="btn btn-ghost btn-small" href="{{ url_for('admin.dashboard') }}">Back to admin</a>
+</div>
+
+<form class="filters card" method="get">
+  <input class="input" name="q" value="{{ q }}" placeholder="Search username or email...">
+  <button class="btn btn-small">Search</button>
+</form>
+
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for u in users %}
+        <tr>
+          <td>{{ u.username }}</td>
+          <td class="muted">{{ u.email }}</td>
+          <td><span class="tag {{ 'tag-eligible' if u.is_admin else 'tag-status' }}">{{ u.role }}</span></td>
+          <td>{% if u.account_active %}<span class="ok">Active</span>
+              {% else %}<span class="danger">Disabled</span>{% endif %}</td>
+          <td class="actions">
+            <form method="post" class="inline"
+                  action="{{ url_for('admin.toggle_user', user_id=u.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-small btn-ghost">
+                {{ 'Disable' if u.account_active else 'Enable' }}</button>
+            </form>
+            <form method="post" class="inline"
+                  action="{{ url_for('admin.set_role', user_id=u.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="role" value="{{ 'user' if u.is_admin else 'admin' }}">
+              <button class="btn btn-small btn-ghost">
+                {{ 'Make user' if u.is_admin else 'Make admin' }}</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
